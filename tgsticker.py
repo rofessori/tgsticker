@@ -3,32 +3,29 @@ import sys
 from PIL import Image
 
 def main():
-    # Get the folder to process from command-line argument or use current directory
     if len(sys.argv) > 1:
         folder = sys.argv[1]
     else:
         folder = '.'
 
-    # Check if folder exists
     if not os.path.isdir(folder):
         print(f"Folder '{folder}' does not exist.")
         sys.exit(1)
 
-    # Create 'render' folder inside the specified folder
+    # processed images will be added to a new new directory "render"
     render_folder = os.path.join(folder, 'render')
     if not os.path.exists(render_folder):
         os.makedirs(render_folder)
 
-    # Process all PNG files in the folder
+    # !! This will process ALL the images in the folder where the script is being executed from
     for filename in os.listdir(folder):
         if filename.lower().endswith('.png'):
             filepath = os.path.join(folder, filename)
-            # Open image
+            # ge timg
             with Image.open(filepath) as img:
-                # Get original dimensions
+                # og dimensions
                 width, height = img.size
                 
-                # Calculate new dimensions to fit within 512x512 while maintaining aspect ratio
                 if width > height:
                     new_width = 512
                     new_height = int((height / width) * 512)
@@ -36,14 +33,11 @@ def main():
                     new_height = 512
                     new_width = int((width / height) * 512)
                 
-                # Resize image
+                #resize and name
                 img_resized = img.resize((new_width, new_height), resample=Image.LANCZOS)
-                
-                # Prepare new filename
                 new_filename = '512x-' + filename
                 new_filepath = os.path.join(render_folder, new_filename)
-                
-                # Save resized image
+                #save
                 img_resized.save(new_filepath)
                 print(f"Processed {filename} -> {new_filename}")
 
